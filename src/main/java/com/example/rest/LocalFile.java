@@ -40,7 +40,7 @@ public class LocalFile {
             while ((bytesRead = is.read(buffer)) != -1) {
                 crcMaker.update(buffer, 0, bytesRead);
             }
-            return crcMaker.getValue(); // This is your error checking code
+            return crcMaker.getValue();
         } catch (final IOException e) {
             e.printStackTrace();
             return 0;

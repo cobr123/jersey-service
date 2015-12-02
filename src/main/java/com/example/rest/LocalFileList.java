@@ -10,8 +10,7 @@ public class LocalFileList {
     private static final CopyOnWriteArrayList<LocalFile> cList = new CopyOnWriteArrayList<>();
 
     static {
-        // Create list of customers
-        try {;
+        try {
              Files.walk(Paths.get("."))
                     .filter(Files::isRegularFile)
                     .forEach(f -> cList.add(new LocalFile(f.toFile())));
