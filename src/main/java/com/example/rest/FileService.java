@@ -21,6 +21,8 @@ import java.util.stream.Collectors;
 @Path("/files")
 public class FileService {
     final private static ArrayList<LocalFile> cList = new ArrayList<>();
+    final private static int MAX_RETURN_LIST_SIZE = 25;
+
 
     static public void addFile(final LocalFile file) {
         synchronized (cList) {
@@ -55,11 +57,22 @@ public class FileService {
         }
     }
 
+    public static List<LocalFile> limitedList(final List<LocalFile> list) {
+        if (list.size() <= MAX_RETURN_LIST_SIZE) {
+            return list;
+        } else {
+            final List<LocalFile> newList = new ArrayList<>(MAX_RETURN_LIST_SIZE);
+            for (int i = 0; i < MAX_RETURN_LIST_SIZE; ++i) {
+                newList.add(list.get(i));
+            }
+            return newList;
+        }
+    }
 
     @GET
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public List<LocalFile> getAllFiles() {
-        return getFileList().stream().collect(Collectors.toList());
+        return limitedList(getFileList().stream().collect(Collectors.toList()));
     }
 
     @GET
@@ -71,7 +84,7 @@ public class FileService {
                 .filter(c -> c.getId() == id)
                 .collect(Collectors.toList());
         if (list.size() > 0) {
-            return list;
+            return limitedList(list);
         } else {
             return null;
         }
@@ -112,7 +125,7 @@ public class FileService {
                 .filter(c -> c.getName().contains(name))
                 .collect(Collectors.toList());
         if (list.size() > 0) {
-            return list;
+            return limitedList(list);
         } else {
             return null;
         }
