@@ -34,6 +34,12 @@ public class FileService {
         }
     }
 
+    static public void deleteFile(final long id) {
+        synchronized (cList) {
+            cList.removeIf(f -> f.getId() == id);
+        }
+    }
+
     static public ArrayList<LocalFile> getFileList() {
         synchronized (cList) {
             if (cList.isEmpty()) {
@@ -59,7 +65,7 @@ public class FileService {
     @GET
     @Path("/id/{id}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public List<LocalFile> getFile(@PathParam("id") long id) {
+    public List<LocalFile> findByID(@PathParam("id") long id) {
         final List<LocalFile> list
                 = getFileList().stream()
                 .filter(c -> c.getId() == id)
@@ -90,10 +96,17 @@ public class FileService {
         }
     }
 
+    @DELETE
+    @Path("/id/{id}")
+    public Response deleteByID(@PathParam("id") long id) {
+        deleteFile(id);
+        return Response.ok("File deleted").build();
+    }
+
     @GET
     @Path("/name/{name}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public List<LocalFile> getFile(@PathParam("name") String name) {
+    public List<LocalFile> findByName(@PathParam("name") String name) {
         final List<LocalFile> list
                 = getFileList().stream()
                 .filter(c -> c.getName().contains(name))
@@ -107,7 +120,7 @@ public class FileService {
 
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public Response uploadFile(@FormDataParam("file") InputStream is, @FormDataParam("file") FormDataContentDisposition fileDisposition)  {
+    public Response uploadFile(@FormDataParam("file") InputStream is, @FormDataParam("file") FormDataContentDisposition fileDisposition) {
         try {
             final File tmpFile = File.createTempFile("uploadFile", "");
             tmpFile.deleteOnExit();
@@ -133,7 +146,7 @@ public class FileService {
             addFile(file);
 
             Files.copy(Paths.get(tmpFile.getPath()), Paths.get(file.getPath()));
-        }catch (final IOException e){
+        } catch (final IOException e) {
             e.printStackTrace();
             return Response.serverError().build();
         }
