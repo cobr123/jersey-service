@@ -1,5 +1,7 @@
 package com.example.rest;
 
+import org.apache.commons.io.FileUtils;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.*;
 import java.util.zip.CRC32;
@@ -23,24 +25,10 @@ public class LocalFile {
         this.path = path;
         this.name = name;
     }
-    public static long getCRC(final File file) {
-        try {
-        return getCRC(new FileInputStream(file));
-        } catch (final IOException e) {
-            e.printStackTrace();
-            return 0;
-        }
-    }
 
-    public static long getCRC(final InputStream is) {
-        try {
-            final CRC32 crcMaker = new CRC32();
-            byte[] buffer = new byte[1024];
-            int bytesRead;
-            while ((bytesRead = is.read(buffer)) != -1) {
-                crcMaker.update(buffer, 0, bytesRead);
-            }
-            return crcMaker.getValue();
+    public static long getCRC(final File file) {
+        try  {
+            return FileUtils.checksumCRC32(file);
         } catch (final IOException e) {
             e.printStackTrace();
             return 0;
@@ -62,7 +50,7 @@ public class LocalFile {
         return id;
     }
 
-    public String getPath() {
+    protected String getPath() {
         return path;
     }
 
