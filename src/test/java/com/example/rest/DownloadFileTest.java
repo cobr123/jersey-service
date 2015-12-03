@@ -21,14 +21,9 @@ public class DownloadFileTest {
 
     private HttpServer server;
     private WebTarget target;
-    private long id;
 
     @Before
     public void setUp() throws Exception {
-        final File file = new File(Main.getRootDir() + "DownloadFileTest.txt");
-        FileUtils.writeStringToFile(file, "DownloadFileTest");
-        file.deleteOnExit();
-        id = LocalFile.getCRC(file);
 
         final String baseURI = "http://localhost:8081/";
         // start the server
@@ -46,6 +41,12 @@ public class DownloadFileTest {
 
     @Test
     public void testDownloadFile() throws IOException {
+        final File file = new File(Main.getRootDir() + "DownloadFileTest.txt");
+        FileUtils.writeStringToFile(file, "DownloadFileTest");
+        file.deleteOnExit();
+        final long id = LocalFile.getCRC(file);
+        FileService.addFile(file);
+
         final String responseMsg = target.path("/files/id/" + id).request(MediaType.APPLICATION_OCTET_STREAM).get(String.class);
         assertEquals("DownloadFileTest", responseMsg);
     }

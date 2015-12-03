@@ -28,13 +28,9 @@ public class DoubleUploadTest {
 
     private HttpServer server;
     private WebTarget target;
-    private File file;
 
     @Before
     public void setUp() throws Exception {
-        file = File.createTempFile("DoubleUploadTest", ".txt");
-        FileUtils.writeStringToFile(file, "DoubleUploadTest");
-
         final String baseURI = "http://localhost:8084/";
         // start the server
         server = Main.startServer(baseURI);
@@ -53,6 +49,10 @@ public class DoubleUploadTest {
 
     @Test
     public void testUploadFile() throws IOException {
+        final File file = File.createTempFile("DoubleUploadTest", ".txt");
+        FileUtils.writeStringToFile(file, "DoubleUploadTest");
+        FileService.addFile(file);
+
         final FileDataBodyPart filePart = new FileDataBodyPart("file", file);
         final FormDataMultiPart multipart = (FormDataMultiPart) new FormDataMultiPart().bodyPart(filePart);
 

@@ -27,14 +27,9 @@ public class UniqUploadTest {
 
     private HttpServer server;
     private WebTarget target;
-    private File file;
 
     @Before
     public void setUp() throws Exception {
-        file = new File(Main.getRootDir() + "UniqUploadTest.txt");
-        FileUtils.writeStringToFile(file, "UniqUploadTest");
-        file.deleteOnExit();
-
         final String baseURI =  "http://localhost:8085/";
         // start the server
         server = Main.startServer(baseURI);
@@ -53,6 +48,10 @@ public class UniqUploadTest {
 
     @Test
     public void testUniqUploadFile() throws IOException {
+        final File file = new File(Main.getRootDir() + "UniqUploadTest.txt");
+        FileUtils.writeStringToFile(file, "UniqUploadTest");
+        FileService.addFile(file);
+
         final FileDataBodyPart filePart = new FileDataBodyPart("file", file);
         final FormDataMultiPart multipart = (FormDataMultiPart) new FormDataMultiPart().bodyPart(filePart);
 

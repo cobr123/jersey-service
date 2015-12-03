@@ -51,6 +51,7 @@ public class UploadTest {
         final File file = File.createTempFile("UploadTest", ".txt");
         FileUtils.writeStringToFile(file, "UploadTest");
         file.deleteOnExit();
+        FileService.addFile(file);
 
         final FileDataBodyPart filePart = new FileDataBodyPart("file", file);
         final FormDataMultiPart multipart = (FormDataMultiPart) new FormDataMultiPart().bodyPart(filePart);

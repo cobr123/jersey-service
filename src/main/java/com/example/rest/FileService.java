@@ -22,13 +22,19 @@ import java.util.stream.Collectors;
 public class FileService {
     final private static ArrayList<LocalFile> cList = new ArrayList<>();
 
-    static private void addFile(final LocalFile file) {
+    static public void addFile(final LocalFile file) {
         synchronized (cList) {
             cList.add(file);
         }
     }
 
-    static private ArrayList<LocalFile> getFileList() {
+    static public void addFile(final File file) {
+        synchronized (cList) {
+            cList.add(new LocalFile(LocalFile.getCRC(file), file.getAbsolutePath(), file.getName()));
+        }
+    }
+
+    static public ArrayList<LocalFile> getFileList() {
         synchronized (cList) {
             if (cList.isEmpty()) {
                 try {

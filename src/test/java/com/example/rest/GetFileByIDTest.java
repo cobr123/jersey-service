@@ -18,15 +18,9 @@ public class GetFileByIDTest {
 
     private HttpServer server;
     private WebTarget target;
-    private long id;
 
     @Before
     public void setUp() throws Exception {
-        final File file = new File(Main.getRootDir() + "GetFileByIDTest.txt");
-        FileUtils.writeStringToFile(file, "GetFileByIDTest");
-        file.deleteOnExit();
-        id = LocalFile.getCRC(file);
-
         final String baseURI = "http://localhost:8082/";
         // start the server
         server = Main.startServer(baseURI);
@@ -43,6 +37,12 @@ public class GetFileByIDTest {
 
     @Test
     public void testGetFileByID() throws IOException {
+        final File file = new File(Main.getRootDir() + "GetFileByIDTest.txt");
+        FileUtils.writeStringToFile(file, "GetFileByIDTest");
+        file.deleteOnExit();
+        final long id = LocalFile.getCRC(file);
+        FileService.addFile(file);
+
         final String responseMsg = target.path("/files/id/" + id).request(MediaType.APPLICATION_JSON).get(String.class);
         assertEquals("[{\"id\":" + id + ",\"name\":\"GetFileByIDTest.txt\"}]", responseMsg);
     }
