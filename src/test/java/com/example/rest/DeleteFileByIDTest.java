@@ -13,8 +13,12 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 public class DeleteFileByIDTest {
 
@@ -41,11 +45,17 @@ public class DeleteFileByIDTest {
     public void testDeleteFileByID() throws IOException {
         final File file = new File(Main.getRootDir() + "DeleteFileByIDTest.txt");
         FileUtils.writeStringToFile(file, "DeleteFileByIDTest");
-        file.deleteOnExit();
         final long id = LocalFile.getCRC(file);
         FileService.addFile(file);
 
         final Response response = target.path("/files/id/" + id).request(MediaType.APPLICATION_JSON).delete();
         assertEquals(200, response.getStatus());
+
+        final Optional<?> match
+                = Files.walk(Paths.get(Main.getRootDir()))
+                .filter(Files::isRegularFile)
+                .filter(f -> f.getFileName().toString().startsWith("DeleteFileByIDTest"))
+                .findFirst();
+        assertFalse(match.isPresent());
     }
 }

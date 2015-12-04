@@ -38,6 +38,11 @@ public class FileService {
 
     static public void deleteFile(final long id) {
         synchronized (cList) {
+            cList.stream()
+                    .filter(c -> c.getId() == id)
+                    .forEach(lf -> {
+                        new File(lf.getPath()).delete();
+                    });
             cList.removeIf(f -> f.getId() == id);
         }
     }
